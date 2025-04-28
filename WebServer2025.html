@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ESP8266 12-F</title>
+		<style>
+
+			body {
+				min-height			: 100vh;
+				margin				: 0;
+				display				: flex;
+				justify-content		: center;
+				align-items			: center;
+				background-color	: #1a1a1a;
+			}
+			
+			@media screen and (max-width: 320px){
+				.wrapperLR{
+					flex-direction	: column;				
+				}
+				.wrapperLR .leftContent, .wrapperLR .rightContent{
+					width			: 100%;
+				}
+			}
+			
+			.MainContainer {
+				background-color	: #2b2b2b;
+				padding				: 20px;
+				border-radius		: 10px;
+				box-shadow			: 0 0 20px rgba(0,0,0,0.5);
+				flex-direction		: column;	
+				justify-content		: center;
+				align-items			: center;
+				width				: 100%;
+				max-width			: 400px;
+				margin				: 0;
+			}
+			
+			.wrapperLR{
+				display				: flex;
+				flex-wrap			: wrap;
+				justify-content		: center;
+				align-items			: center;
+			}
+			.wrapperLR .rightContent{
+				width				: 50%;
+				display				: flex;
+				flex-direction		: column;	
+				justify-content		: center;
+				align-items			: center;
+			}
+			.wrapperLR .leftContent{
+				width				: 50%;	
+				display				: flex;
+				flex-direction		: column;	
+				justify-content		: center;
+				align-items			: left;
+			}
+			
+			h1 {
+				color				: #00FFFF;
+				text-shadow			: 5px 2px 4px rgba(0,0,0,1);
+				text-align			: center;
+				font-size			: 35px; 
+				font-weight			: Bold;
+				font-family			: 'Arial',arial,monospace;
+				width				: 100%;
+			}
+
+			#restart-btn{
+				position			: relative;
+				background-color	: #2B2B2B;
+				color				: #B0BEC5;
+				text-shadow			: 2.5px 0.1px 1px rgba(100,0,0,0.8);
+				font-size			: 90%;
+				font-weight			: bold;
+				border				: none;
+				cursor				: pointer;
+				border-radius		: 5px;
+				transition			: opacity .4s;
+			}
+			#restart-btn:hover{
+				background-color	: #444;
+			}
+			#restart-btn:active{
+				transform			: scale(0.95);
+			}
+			.loading::after{
+				content				: " ....";
+				animation			: dots 1s infinite;
+			}
+			@keyframes dots{
+				0%{ content: " .";}
+				25%{ content: " ..";}
+				50%{ content: " ...";}
+				75%{ content: " ....";}
+			}
+
+
+			.Waktu {
+				position			: relative;
+				font-size			: 100%;
+				text-shadow			: 3px 2px 4px rgba(0,0,0,1);
+				font-family			: 'Courier New',Courier,monospace;
+				text-align			: left;
+				font-weight			: bold;
+				width				: auto;
+				color				: #B0BEC5;
+			}
+			
+			
+			.infoHardware {
+				position			: relative;
+				text-align			: left;
+				text-shadow			: 2px 2px 4px rgba(0,0,0,1);
+				margin-top			: 2%;
+				font-size			: 60%;
+				color				: #B0BEC5;
+				font-family			: 'Arial',arial,monospace ;
+			}
+			
+			.judulSlider {
+				position			: relative;
+				text-align			: center;
+				margin-top			: 2%;
+				font-size			: 80%; 
+				font-weight			: Bold;
+				text-shadow			: 2px 2px 4px rgba(0,0,0,1);
+				font-family			: 'Arial',arial,monospace ;
+				color				: #B0BEC5;
+			}
+			.valuePWM {
+				position			: relative;
+				text-align			: center;
+				font-size			: 80%; 
+				text-shadow			: 2px 2px 4px rgba(0,0,0,1);
+				font-weight			: Bold;
+				font-family			: 'Arial',arial,monospace ;
+				color				: #B0BEC5;
+			}
+			
+			@keyframes fadeTextketeranganSlider{
+				0%, 100% { opacity: 1; }
+				50% { opacity: 0; }
+			}
+			.keteranganSlider {
+				position			: relative;
+				text-align			: center;
+				font-size			: 10%; 
+				font-style			: italic;
+				text-shadow			: 2px 2px 4px rgba(100,0,0,1);
+				font-family			: 'Arial',arial,monospace ;
+				color				: #B0BEC5;
+				animation			: fadeTextketeranganSlider 1s ease-in-out infinite;
+			}
+			
+			.keteranganButton7seg {
+				position			: relative;
+				text-align			: center;
+				margin-top			: 10px;
+				margin-bottom		: 5px;
+				font-size			: 50%; 
+				font-weight			: Bold;
+				text-shadow			: 2px 2px 4px rgba(0,0,0,1);
+				font-family			: 'Arial',arial,monospace ;
+				color				: #B0BEC5;
+			}
+			
+			
+			.slidecontainer {
+				position			: relative;
+				text-align			: center;
+				width				: 100%;
+			}
+			.slider {
+				position			: relative;
+				-webkit-appearance	: none;
+				width				: 80%;
+				height				: 10px;
+				border-radius		: 5px;
+				background			: #444;
+				outline				: none;
+				opacity				: 0.7;
+				-webkit-transition	: .2s;
+				transition			: opacity .2s;			
+			}
+			.slider:hover {
+				opacity				: 1; 
+			}
+			.slider::-webkit-slider-thumb{
+				-webkit-appearance	: none;
+				appearance			: none;
+				width				: 20px;
+				height				: 20px;
+				background			: #00FF00;
+				cursor				: pointer;
+				border-radius		: 50%;
+				border 				: 2px solid #333;
+				box-shadow			: 0 0 5px rgba(0,255,0,0.5);	
+				transition			: all 0.2s ease-in-out;
+			}
+			.slider::-webkit-slider-thumb:hover {
+				background			: #00CC00;
+				box-shadow			: 0 0 10px rgba(0,255,0,0.8);
+			}
+			.slider::-moz-range-thumb {
+				width				: 20px;
+				height				: 20px;
+				border-radius		: 50%;
+				border 				: 2px solid #333;
+				box-shadow			: 0 0 5px rgba(0,255,0,0.5);
+				background			: #00FF00;
+				cursor				: pointer;
+			}
+			.slider::-moz-range-track {
+				width				: 100%;
+				height				: 5px;
+				background			: #444;
+				border-radius		: 2px;
+			}
+			
+			
+			.switchTurnAll {
+				position			: relative;
+				display				: flex;
+				width				: 100%;
+				height				: 20px;
+			}
+			.switchTurnAll input {
+				display				: none;
+			}
+			.sliderSTA {
+				cursor				: pointer;
+				position			: relative;
+				width				: 45px;
+				height				: 20px;
+				background-color	: #FFCE00;
+				-webkit-transition	: .4s;
+				transition			: .4s;
+				border 				: 1.5px solid #333;
+			}
+			.sliderSTA:before {
+				position			: absolute;
+				content				: "";
+				height				: 14px;
+				width				: 14px;
+				left				: 2.7px;
+				top					: 2.7px;
+				background-color	: white;
+				border-radius		: 50%;
+				-webkit-transition	: .2s;
+				transition			: .2s;
+			}
+
+			input:checked + .sliderSTA {
+				background-color	: #00FF00;
+				box-shadow			: 0 0 8px #00FF00;
+			}
+			input:checked + .sliderSTA:before {
+				-webkit-transform	: translateX(23px);
+				-ms-transform		: translateX(23px);
+				transform			: translateX(23px);
+			}
+			.sliderSTA.round {
+				border-radius		: 10px;
+			}
+			.sliderSTA.round:before {
+				border-radius		: 50%;
+			}
+			
+			.bttnSetNow{
+				display				: flex;
+				padding				: 10px;	
+				justify-content		: center;
+				align-items			: center;
+				gap					: 20px
+			}
+			.setNowBttn{
+				background-color	: #FF4500;
+				color				: #FFFFFF;
+				padding				: 10px 20px;
+				font-size			: 16px;
+				border				: none;
+				border-radius		: 5px;
+				cursor				: pointer;
+				text-transform		: uppercase;
+				font-family			: 'Arial',arial,monospace;
+				text-shadow			: 2px 2px 4px rgba(0,0,0,1);
+				box-shadow			: FF4500;
+				transition			: all 0.3s ease;
+			}
+			.setNowBttn:hover{
+				background-color	: #45A049;
+				transform			: translateY(-2px);
+				box-shadow			: 0 6px 8px rgba(0,255,0,0.15);
+			}
+			.setNowBttn:active{
+				background-color	: #3E8E41;
+				transform			: translateY(1px);
+				box-shadow			: 0 2px 4px rgba(0,0,0,0.2);
+			}
+			
+			.JWS {				
+				width				: 100%;
+				margin-top			: 2%;
+				text-shadow			: 5px 2px 4px rgba(0,0,0,1);
+				font-family			: 'Arial',arial,monospace;
+				font-size			: 8px;
+				white-space			: nowrap;
+				overflow			: hidden;
+				position			: relative;
+				color				: #B0BEC5;
+			}
+			
+			.JWS span{
+				display				: inline-block;
+				padding-left		: 100%;
+				animation			: marquee 20s linear infinite;
+			}
+			
+			.Cpy {				
+				width				: 100%;
+				margin-top			: 0.8%;
+				text-shadow			: 5px 2px 4px rgba(0,0,0,1);
+				font-family			: 'Arial',arial,monospace;
+				font-size			: 13px;
+				white-space			: nowrap;
+				overflow			: hidden;
+				position			: relative;
+				color				: #00B7FF;
+			}
+			
+			.Cpy span{
+				display				: inline-block;
+				padding-left		: 100%;
+				animation			: marquee 15s linear infinite;
+			}
+			
+			@keyframes marquee{
+				0%{transform:translateX(0);}
+				100%{transform:translateX(-100%);}
+			}
+			
+			.statusConnection{
+				width				: 100%;
+				text-align			: right;
+				margin-top			: 2%;
+				text-shadow			: 5px 2px 4px rgba(0,0,0,1);
+				font-family			: 'Arial',arial,monospace;
+				font-size			: 6.5px;
+				position			: relative;
+				color				: #B0BEC5;
+			}	
+			
+			.sidebar-container{
+				display				: flex;
+				justify-content		: center;
+				align-items			: center;
+				width				: 100%;
+				background-color	: rgb(0,183, 235);
+			}
+			
+			.sidebar{
+				display				: flex;
+				flex-direction		: row;
+				gap					: 1.5px;
+				box-shadow			: 0 0 5px rgba(0,183, 235, 1); 
+				width				: 100%;
+				padding				: 1px;
+				justify-content		: center;
+				align-items			: center;
+			}
+			
+			.menu-item{
+				text-align			: center;
+				box-sizing			: border-box;
+				line-height			: 15px;
+				flex				: 1; /*agar lebar sama*/
+				text-align			: center;
+				cursor				: pointer;
+				background-color	: #555;
+				color				: white;
+				border				: none;
+				border-radius		: 2px;
+				font-size			: 9px;
+				font-family			: 'Arial',arial,monospace ;
+				transition			: background-color 0.3s ease;
+			}
+			
+			.menu-item:hover{
+				background-color	: #777;
+			}
+				
+			.containerPage{
+				position			: relative;
+				background-color	: #2b2b2b;
+				border-radius		: 10px;
+				padding				: 20px;
+				justify-content		: center;
+				align-items			: center;
+				width				: 100%;
+				max-width			: 400px;
+				color				: #B0BEC5;
+				font-family			: 'Arial',arial,monospace ;
+			}
+			
+			.notification{
+				position			: relative;
+				background-color	: #4CAF50;
+				max-width			: 400px;
+				text-align			: center;
+				justify-content		: center;
+				align-items			: center;
+				color				: white;
+				padding				: 5px;
+				border-radius		: 5px;
+				box-shadow			: 0 2px 5px rgba(0,0,0,0.3);
+				font-family			: 'Arial',arial,monospace ;
+				font-size			: 12px;
+				opacity				: 0;
+				transition			: opacity 1s ease-in-out;
+				display				: none;
+			}
+			
+			.notification.show{
+				display				: block;
+				opacity				: 1;
+			}
+			
+			.notification.error{
+				background-color	: #F44336;
+			}
+			
+			.correction-table, .alarm-table{
+				width				: 100%;
+				border-collapse		: collapse;
+				color				: white;
+				font-family			: 'Arial',arial,monospace ;
+			}
+			
+			.correction-table tr, .alarm-table tr{
+				display				: flex;
+				justify-content		: space-between;
+				align-items			: center;
+			}
+			
+			.correction-table td, .alarm-table td{
+				padding				: 5px;
+			}
+			
+			.label-cell{
+				width				: 50%;
+				text-align			: left;
+				font-size			: 14px;
+				color				: #B0BEC5;
+			}
+			
+			.input-cell{
+				width				: 50%;
+				text-align			: left;
+			}
+			
+			
+			.correction-table input[type="number"]{
+				width				: 90%;
+				text-align			: center;
+				font-family			: 'Courier New',Courier,monospace;
+				font-weight			: bold;
+				padding				: 5px;
+				border				: 2px solid #555;
+				border-radius		: 5px;
+				background-color	: #333;
+				color				: #B0BEC5;
+				font-size			: 20px;
+				transition			: border-color 0.3s ease,  box-shadow 0.3s ease;
+			}
+			
+			.correction-table input[type="number"]:focus{
+				border-color		: #00B7EB;
+				box-shadow			: 0 0 10px rgba(0,183, 235, 0.5);
+				outline				: none;
+			}
+			
+			.correction-table input[type="number"]:hover{
+				border-color		: #777;
+			}
+			
+			.alarm-table input[type="text"]{
+				width				: 90%;
+				text-align			: center;
+				font-family			: 'Courier New',Courier,monospace;
+				font-weight			: bold;
+				padding				: 5px;
+				border				: 2px solid #555;
+				border-radius		: 5px;
+				background-color	: #333;
+				color				: #B0BEC5;
+				font-size			: 20px;
+				transition			: border-color 0.3s ease,  box-shadow 0.3s ease;
+			}
+			
+			.alarm-table input[type="text"]:focus{
+				border-color		: #00B7EB;
+				box-shadow			: 0 0 10px rgba(0,183, 235, 0.5);
+				outline				: none;
+			}
+			
+			.alarm-table input[type="text"]:hover{
+				border-color		: #777;
+			}
+			
+			.checkboxAlarm-group{
+				display				: flex;
+				gap					: 2.5px;
+				justify-content		: center;
+				align-items			: center;
+			}
+			
+			.checkboxAlarm-group label{
+				display				: flex;
+				align-items			: center;
+				font-size			: 14px;
+				color				: #B0BEC5;
+				font-family			: 'Arial',arial,monospace ;
+			}
+			
+			.checkboxAlarm-group span{
+				marginRight			: 2px;
+			}
+			
+			.checkboxAlarm-group input[type="checkbox"]{
+				width				: 16px;
+				height				: 16px;
+				cursor				: pointer;
+				accent-color		: #00B7EB;
+			}
+			
+			.button-group{
+				display				: flex;
+				gap					: 10px;
+				margin-top			: 20px;
+				width				: 100%;
+				justify-content		: center;
+				align-items			: center;
+			}
+			
+			.submit-btn, .back-btn{
+				padding				: 10px 20px;
+				width				: 100px;
+				box-sizing			: border-box;
+				text-align			: center;
+				line-height			: 15px;
+				border				: none;
+				border-radius		: 5px;
+				font-size			: 14px;
+				cursor				: pointer;
+				transition			: background-color 0.3s ease;
+			}
+			
+			.submit-btn{
+				background-color	: #00B7EB;
+				color				: white;
+			}
+			
+			.submit-btn:hover{
+				background-color	: #0099C7;
+			}
+			
+			.back-btn{
+				background-color	: #555;
+				color				: white;
+			}
+			
+			.back-btn:hover{
+				background-color	: #777;
+			}
+			
+			.MainContainer, .containerPage{
+				display				: none;
+			}
+			
+			.MainContainer.active, .containerPage.active{
+				display				: block;
+			}
+			
+		</style>
+</head>
+
+<body>
+	<div id="mainPage" class='MainContainer active'>
+		<h1> Setting Seven Segment Display </h1>
+		<div class="wrapperLR">
+			<div class="leftContent">
+				<div class="Waktu">
+					<table>
+						<tr><td>Time</td> <td>: <span id="SjamFromDevice">0</span></td></tr>
+						<tr><td>Date</td> <td>: <span id="StanggalFromDevice">0</span></td></tr>
+					</table>
+				</div>
+				<div class="infoHardware">
+					<table>
+						<tr><td>ID Chip ESP</td>	<td>: <span id="ChipIDRead">0</span></td></tr>
+						<tr><td>Tegangan Gate</td> 	<td>: <span id="brightnessRead">0</span> volt</td></tr>
+						<tr><td>Nilai PWM</td> 		<td>: <span id="vPWMRead">0</span></td></tr>
+						<tr><td>Last Value PWM</td> <td>: <span id="lastSliderRead">0</span> %</td></tr>
+					</table>
+				<button id="restart-btn" onclick="confirmReset()"> ↺ Restart Device </button>
+				</div>
+			</div>
+		
+			<div class="rightContent">
+				<!-- SLIDER -->
+				<div class="slidecontainer">
+				  <input type="range" min="0" max="100" class="slider" id="PWM" value="0">
+				</div>
+				<div class="judulSlider">
+					Slider Brightness
+				</div>
+				<div class="valuePWM"> 
+				  Value PWM: <span id="outputSliderWeb">0</span>%<br>
+				</div>
+				<div class="keteranganSlider">
+					  * Tahan dan geser slider, jangan lepaskan sebelum mencapai nilai yang diinginkan, karena melepaskannya berarti menetapkan nilai tersebut.
+				</div>
+				<div class="keteranganButton7seg">
+					Turn On All Seven Segment
+				</div>
+				<div>
+					<label	class="switchTurnAll">
+						<input type="checkbox" onchange="state_change(this)">
+						<span class="sliderSTA round"></span>
+					</label>
+				</div>
+			</div>	
+		</div>
+		
+		<!-- <div class= "bttnSubmit"> <input type="submit" value="Set Now"></div> -->
+		
+		<div class="bttnSetNow">
+			<button class="setNowBttn" onclick="sendDateTime()">SET NOW</button>
+		</div>
+		
+		<div class="sidebar-container">
+			<div class="sidebar">
+				<button class="menu-item" onclick="switchPage('correctionPage')">Correction Time</button>
+				<button class="menu-item" onclick="switchPage('alarmPage')">Setting Alarm</button>
+			</div>
+		</div>
+		
+		<div class="JWS">
+			<span id="infoJWSSpan">► Data has not been load ◄</span>
+		</div>
+		<div class="Cpy">
+			<span> ► Create by ZainAnwar™ 2025 ▲ ESPRESSIF System ▲ Arduino.cc ▲ Notepad++ ◄ </span>
+		</div>
+		<div class="statusConnection">
+			Status : <span id='statusCon'>Disconnect</span>
+		</div>
+	</div>
+	
+	<!-- Correction Page -->
+    <div id="correctionPage" class="containerPage">
+        <h1>Correction</h1>
+			<table class="correction-table">
+				<tr>
+					<td class="label-cell"> Koreksi Bulan Hijriah (Hari)</label></td>
+					<td class="input-cell"><input type="number" id="corrHijriahDay" min="-10" max="10" value="0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Koreksi Subuh (Menit)</label></td>
+					<td class="input-cell"><input type="number" id="corrSubuh" min="-10" max="59" value="0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Koreksi Dzuhur (Menit)</label></td>
+					<td class="input-cell"><input type="number" id="corrDzuhur" min="-10" max="59" value="0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Koreksi Asar (Menit)</label></td>
+					<td class="input-cell"><input type="number" id="corrAsar" min="-10" max="59" value="0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Koreksi Maghrib (Menit)</label></td>
+					<td class="input-cell"><input type="number" id="corrMaghrib" min="-10" max="59" value="0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Koreksi Isya (Menit)</label></td>
+					<td class="input-cell"><input type="number" id="corrIsya" min="-10" max="59" value="0"></td>
+				</tr>
+			</table>
+		<div id="correctionNotification" class="notification"></div>
+		<div class="button-group">
+			<button class="submit-btn" onclick="submitCorrection()">Submit</button>
+			<button class="back-btn" onclick="switchPage('mainPage')">Back</button>
+		</div>
+    </div>
+
+    <!-- Alarm Page -->
+    <div id="alarmPage" class="containerPage">
+        <h1>Alarm</h1>
+			<table class="alarm-table">
+				<tr>
+					<td class="label-cell">Alarm 1 (HH:MM:SS)</label></td>
+					<td class="input-cell"><input type="text" id="alarm1Time" placeholder="HH:MM:SS" value="00:00:00"></td>
+				</tr>
+				<tr>
+					<td class="label-cell">Pattern Alarm 1</td>
+					<td class="input-cell"><input type="text" id="alarm1Params" placeholder="xbeep;tOn;tOff;longP;dur" value="0;0;0;0;0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Alarm 2 (HH:MM:SS)</label></td>
+					<td class="input-cell"><input type="text" id="alarm2Time" placeholder="HH:MM:SS" value="00:00:00"></td>
+				</tr>
+				<tr>
+					<td class="label-cell">Pattern Alarm 2</td>
+					<td class="input-cell"><input type="text" id="alarm2Params" placeholder="xbeep;tOn;tOff;longP;dur" value="0;0;0;0;0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Alarm 3 (HH:MM:SS)</label></td>
+					<td class="input-cell"><input type="text" id="alarm3Time" placeholder="HH:MM:SS" value="00:00:00"></td>
+				</tr>
+				<tr>
+					<td class="label-cell">Pattern Alarm 3</td>
+					<td class="input-cell"><input type="text" id="alarm3Params" placeholder="xbeep;tOn;tOff;longP;dur" value="0;0;0;0;0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Alarm 4 (HH:MM:SS)</label></td>
+					<td class="input-cell"><input type="text" id="alarm4Time" placeholder="HH:MM:SS" value="00:00:00"></td>
+				</tr>
+				<tr>
+					<td class="label-cell">Pattern Alarm 4</td>
+					<td class="input-cell"><input type="text" id="alarm4Params" placeholder="xbeep;tOn;tOff;longP;dur" value="0;0;0;0;0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Alarm 5 (HH:MM:SS)</label></td>
+					<td class="input-cell"><input type="text" id="alarm5Time" placeholder="HH:MM:SS" value="00:00:00"></td>
+				</tr>
+				<tr>
+					<td class="label-cell">Pattern Alarm 5</td>
+					<td class="input-cell"><input type="text" id="alarm5Params" placeholder="xbeep;tOn;tOff;longP;dur" value="0;0;0;0;0"></td>
+				</tr>
+				
+				<tr>
+					<td class="label-cell">Active Alarm</td>
+					<td class="input-cell">
+						<div class="checkboxAlarm-group">
+							<label><span>1.</span><input type="checkbox" id="alarm1Active"></label>
+							<label><span>2.</span><input type="checkbox" id="alarm2Active"></label>
+							<label><span>3.</span><input type="checkbox" id="alarm3Active"></label>
+							<label><span>4.</span><input type="checkbox" id="alarm4Active"></label>
+							<label><span>5.</span><input type="checkbox" id="alarm5Active"></label>
+						</div>
+					</td>
+				</tr>			
+			</table>
+		<div id="alarmNotification" class="notification"></div>
+		<div class="button-group">
+			<button class="submit-btn" onclick="submitAlarm()">Submit</button>
+			<button class="back-btn" onclick="switchPage('mainPage')">Back</button>
+		</div>
+    </div>
+
+
+	<script>
+		
+		let currentPage = 'mainPage';
+		let mainPageInterval = null;
+		
+		window.addEventListener("load", function(){
+			console.log("Semua Elemen Web sudah terload");
+			switchPage("mainPage");
+		});
+	
+		// Fungsi untuk berpindah antar halaman
+		function switchPage(pageId) {
+			//if(currentPage === pageId) return;		
+			if(mainPageInterval) {
+				clearInterval(mainPageInterval);
+				mainPageInterval = null; //stop interval dalam main page
+			}
+			
+			//sembunyikan semua halaman
+            document.querySelectorAll('.MainContainer, .containerPage').forEach(page => {
+                page.classList.remove('active');
+            });
+			
+			//tampilkan halaman yg dipilih
+            document.getElementById(pageId).classList.add('active');
+			currentPage = pageId;
+			
+            // Memuat data hanya saat masuk ke halaman Correction atau Alarm
+			if (pageId === 'mainPage') {
+				if (!mainPageInterval) {
+					mainPageInterval =  setInterval(function(){
+						infoDateTime();
+						getInfoDataBrightness();
+						getInfoDataLastSlider();
+						getInfoDataPWM();
+						getInfoChipID();
+						getInfoJWS();
+					}, 750);
+				}
+			} else if (pageId === 'correctionPage') {
+				loadCorrectionData();
+			} else if (pageId === 'alarmPage') {
+				loadAlarmData();
+			}
+        }
+		
+		//Fungsi show notif
+		
+		function showNotification(pageId, message, isError=false){
+			const notification = document.getElementById(`${pageId}Notification`);
+			notification.textContent = message;
+			if(isError){
+				notification.classList.add('error');
+			}else {
+				notification.classList.remove('error');
+			}
+			notification.classList.add('show');
+			
+			//sembunyikan notif setelah 3detik
+			setTimeout(() => {
+				notification.classList.remove('show');
+			}, 3000);
+		}
+		
+		// Fungsi untuk memuat data Correction
+        function loadCorrectionData() {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4) {
+					if(this.status == 200) {
+						let correction = this.responseText.split(',');
+						if (correction.length === 6){
+							document.getElementById('corrHijriahDay').value = correction[0] || '0';
+							document.getElementById('corrSubuh').value = correction[1] || '0';
+							document.getElementById('corrDzuhur').value = correction[2] || '0';
+							document.getElementById('corrAsar').value = correction[3] || '0';
+							document.getElementById('corrMaghrib').value = correction[4] || '0';
+							document.getElementById('corrIsya').value = correction[5] || '0';
+							console.log("Berhasil load Coor");
+						}
+					} else {
+						showNotification('correction', 'Gagal Load Correction Time', true);
+					}
+                }
+            };
+            xhttp.open("GET", "/getCorrection", true);
+            xhttp.send();
+        }
+
+        // Fungsi untuk memuat data Alarm
+        function loadAlarmData() {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4) {
+					if(this.status == 200) {
+						let data = this.responseText.split(',');
+						if(data.length===45){ //5 alarm x 9 parameter
+							for (let i = 0; i < 5; i++) {
+								let hour = String(data[i * 9]).padStart(2, '0');
+								let minute = String(data[i * 9 + 1]).padStart(2, '0');
+								let second = String(data[i * 9 + 2]).padStart(2, '0');
+								document.getElementById(`alarm${i + 1}Time`).value = `${hour}:${minute}:${second}`;
+								
+								//parameter (cnt,ton,toff,longp,dur)
+								let params = [
+									data[i * 9 + 3], //cnt
+									data[i * 9 + 4],
+									data[i * 9 + 5],
+									data[i * 9 + 6],
+									data[i * 9 + 7] //dur
+								].join(';');
+								document.getElementById(`alarm${i + 1}Params`).value = params;
+								
+								//status aktif Alarm
+								let isActiveAlarm = parseInt(data[i * 9 + 8]) === 1;
+								document.getElementById(`alarm${i + 1}Active`).checked = isActiveAlarm;
+								//console.log(params);
+								//console.log(isActiveAlarm);
+							}
+						}
+						console.log("Berhasil load Alarm");
+						//console.log(data);
+					} else { 
+						showNotification('alarm', 'Gagal Load Alarm', true);
+						console.error("Gagal Load Alarm " + this.responseText + " status " + this.status); }
+                }
+            };
+            xhttp.open("GET", "/getAlarms", true);
+            xhttp.send();
+        }
+
+        // Fungsi untuk submit data Correction
+        function submitCorrection() {
+            let hijriahDay = document.getElementById('corrHijriahDay').value;
+            let subuh = document.getElementById('corrSubuh').value;
+            let dzuhur = document.getElementById('corrDzuhur').value;
+            let asar = document.getElementById('corrAsar').value;
+            let maghrib = document.getElementById('corrMaghrib').value;
+            let isya = document.getElementById('corrIsya').value;
+            let data = `/correctionTimeJWS?hijriahDay=${hijriahDay}&subuh=${subuh}&dzuhur=${dzuhur}&asar=${asar}&maghrib=${maghrib}&isya=${isya}`;
+            var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4) {
+						if(this.status == 200) {
+							loadCorrectionData();
+							console.log("Berhasil submit Coor");
+							showNotification('correction', 'Data koreksi terkirim!');
+						} else { 
+							console.error("Gagal " + this.responseText + " status " + this.status);
+							showNotification('correction', 'Data koreksi gagal terkirim!', true);
+						}
+					}
+			};
+				xhttp.open("GET", data, true);
+				xhttp.send();
+        }
+
+        // Fungsi untuk submit data Alarm
+        function submitAlarm() {
+            let alarms = [
+			document.getElementById('alarm1Time').value,
+			document.getElementById('alarm2Time').value,
+			document.getElementById('alarm3Time').value,
+			document.getElementById('alarm4Time').value,
+			document.getElementById('alarm5Time').value
+			];
+			
+			let params = [
+			document.getElementById('alarm1Params').value,
+			document.getElementById('alarm2Params').value,
+			document.getElementById('alarm3Params').value,
+			document.getElementById('alarm4Params').value,
+			document.getElementById('alarm5Params').value
+			];
+			
+			let activeAlarms = [
+			document.getElementById('alarm1Active').checked ? 1 : 0,
+			document.getElementById('alarm2Active').checked ? 1 : 0,
+			document.getElementById('alarm3Active').checked ? 1 : 0,
+			document.getElementById('alarm4Active').checked ? 1 : 0,
+			document.getElementById('alarm5Active').checked ? 1 : 0
+			];
+
+			let data = '/alarmSet?';
+			for(let i = 0; i<params.length; i++){
+				
+				let[hour, minute, second] = alarms[i].split(':').map(Number);
+				if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59 && second >= 0 && second <= 59) {
+					data += `alarm${i + 1}Hour=${hour}&alarm${i + 1}Minute=${minute}&alarm${i + 1}Second=${second}&`;
+				} else {
+					showNotification('alarm', `Format waktu untuk Alarm ${i + 1} salah! Gunakan HH:MM:SS (0-23:0-59:0-59)`, true);
+					return;
+				}
+				
+				let paramValues = params[i].split(';').map(Number);
+				if(paramValues.length === 5 && paramValues.every(val => !isNaN(val))){
+					data += `alarm${i + 1}Cnt=${paramValues[0]}&alarm${i + 1}Ton=${paramValues[1]}&alarm${i + 1}Toff=${paramValues[2]}&alarm${i + 1}longP=${paramValues[3]}&alarm${i + 1}Dur=${paramValues[4]}&`;
+				} else {
+					showNotification('alarm', `Format parameter untuk Alarm ${i + 1} salah! Gunakan xbeep;tOn;tOff;longP;Dur (0;0;0;0;0)`, true);
+					return;
+				}
+				
+				data += `alarm${i + 1}Active=${activeAlarms[i]}&`;
+			}
+			
+			data = data.slice(0, -1);
+			var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4) {
+						if(this.status == 200) {
+							console.log("Berhasil submit Alarm");
+							showNotification('alarm', 'Data setting alarm terkirim!');
+							loadAlarmData();
+						} else {
+							showNotification('alarm', 'Data setting alarm gagal terkirim!', true);
+						}
+					}
+			};
+				xhttp.open("GET", data, true);
+				xhttp.send();
+        }
+		
+		function infoDateTime(){
+			const currentTime		= new Date();
+			const zhour				= currentTime.getHours().toString().padStart(2,'0');
+			const zminute			= currentTime.getMinutes().toString().padStart(2,'0');
+			const zsecond			= currentTime.getSeconds().toString().padStart(2,'0');
+			const zday				= currentTime.getDate().toString().padStart(2,'0');
+			const zmonth			= (currentTime.getMonth()+1).toString().padStart(2,'0');
+			const zyears			= currentTime.getFullYear().toString();
+			
+			const jamFromDevice		= `${zhour}:${zminute}:${zsecond}`;
+			const tanggalFromDevice	= `${zday}/${zmonth}/${zyears}`;
+			
+			
+			document.getElementById("SjamFromDevice").textContent = jamFromDevice;
+			document.getElementById("StanggalFromDevice").textContent = tanggalFromDevice;
+			
+		}
+		
+		// setInterval(infoDateTime,500);
+		// infoDateTime();
+		
+		function sendDateTime(){
+			const currentTime		= new Date();
+			const shour				= currentTime.getHours();
+			const sminute			= currentTime.getMinutes();
+			const ssecond			= currentTime.getSeconds();
+			const sday				= currentTime.getDate();
+			const smonth			= currentTime.getMonth() + 1;
+			const syears			= currentTime.getFullYear();
+			const data				= `/setDateTime?Jam=${shour}&Menit=${sminute}&Detik=${ssecond}&Tanggal=${sday}&Bulan=${smonth}&Tahun=${syears}`;
+			
+			var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4) {
+						if(this.status == 200) {
+							console.log("Berhasil kririm dateTime");
+						}
+					}
+			};
+				xhttp.open("GET", data, true);
+				xhttp.send();
+		}
+		
+		//untuk proses nilai slider ditampilkan dalam numerik
+		var slider = document.getElementById("PWM");
+		var output = document.getElementById("outputSliderWeb");
+
+		slider.oninput = function() {
+			output.innerHTML = this.value;
+			updateSliderPWM(this.value);
+		}
+		
+		//frome code ESP8266 server.on("/sliderValue", infoSliderNow);	
+		function updateSliderPWM(val) {
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("GET", "/sliderValue?valueSlider="+val, true);
+			xhttp.send();
+		}
+
+		//frome code ESP8266 server.on("/set7Seg", TurnOnAll);
+		function state_change(element) {
+			var xhttp = new XMLHttpRequest();
+
+			if (element.checked){
+				xhttp.open("GET", "/set7Seg?valstate7Seg=1", true);
+			} else if (!element.checked){
+				xhttp.open("GET", "/set7Seg?valstate7Seg=0", true);
+			}
+			xhttp.send();
+		}
+		
+		//button restart Device
+		let isStateRestart	= false;
+		function confirmReset(){
+			var xhttp = new XMLHttpRequest();
+			if(confirm("Mulai Ulang Device ?")){
+				const btn = document.getElementById("restart-btn");
+				btn.disabled = true;
+				btn.classList.add("loading");
+				btn.innerText = "Restarting";
+				setTimeout(() => {
+					xhttp.open("GET", "/RestartESP?valRestart=1", true);
+					xhttp.send();
+					isStateRestart	= true;
+				},750);
+			} 
+		}
+		
+		//server.on("/IDEsp", infoIDChip);
+		function getInfoChipID() {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					if(this.status == 200) {
+						document.getElementById("ChipIDRead").innerHTML = this.responseText;
+						//console.log("Berhasil load ChipID");
+					}
+				}
+				//for check conection
+				if(this.readyState == 4){
+					if(this.status == 200) {
+						document.getElementById("statusCon").innerHTML	= "Connect";
+						if(isStateRestart){
+							const btn = document.getElementById("restart-btn");
+							btn.disabled = false;
+							btn.classList.remove("loading");
+							btn.innerText = "↺ Restart Device";
+							isStateRestart	= false;
+						}
+					} else{
+						document.getElementById("statusCon").innerHTML	= "Disconnect";
+					}
+				}
+		};
+			xhttp.open("GET", "/IDEsp", true);
+			xhttp.send();
+		}
+		
+		
+		//frome code ESP8266 server.on("/JWSWeb", infoJWSWEB);
+		function getInfoJWS() {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					if(this.status == 200) {
+						document.getElementById("infoJWSSpan").innerHTML = this.responseText;
+						//console.log("Berhasil load infoJWSBerjalan");
+					}
+				}
+		};
+			xhttp.open("GET", "/JWSWeb", true);
+			xhttp.send();
+		}
+		
+		//frome code ESP8266 server.on("/brightnessRead", infoVoltage);	
+		function getInfoDataBrightness() {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					if(this.status == 200) {
+						document.getElementById("brightnessRead").innerHTML = this.responseText;
+						//console.log("Berhasil load valueVoltage");
+					}
+				}
+		};
+			xhttp.open("GET", "/brightnessRead", true);
+			xhttp.send();
+		}
+		
+		
+		//frome code ESP8266 server.on("/vPWMRead", infoPWM);		
+		function getInfoDataPWM() {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					if(this.status == 200) {
+						document.getElementById("vPWMRead").innerHTML = this.responseText;
+						//console.log("Berhasil load nilaiPWM");
+					}
+				}
+		};
+			xhttp.open("GET", "/vPWMRead", true);
+			xhttp.send();
+		}
+		
+		let isUserInteracting	= false;
+		// Slider digunakan
+		document.getElementById("PWM").addEventListener("input",function(){
+			isUserInteracting	= true;
+		});
+		// Slider selesai digunakan
+		document.getElementById("PWM").addEventListener("change",function(){
+			setTimeout(() => {
+				isUserInteracting	= false;
+			}, 100);
+			
+		});
+		//frome code ESP8266 Handle server.on("/lastSliderRead", infoLastSlider);
+		function getInfoDataLastSlider() {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					if(this.status == 200) {
+						document.getElementById("lastSliderRead").innerHTML = this.responseText;
+						//console.log("Berhasil load infoLastSlider");
+						if(!isUserInteracting){
+							document.getElementById("PWM").value = this.responseText;
+							document.getElementById("outputSliderWeb").innerHTML = this.responseText;
+						}
+					}
+				}
+		};
+			xhttp.open("GET", "/lastSliderRead", true);
+			xhttp.send();
+		}
+	</script>
+	
+</body>
+</html>
