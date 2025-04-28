@@ -1,1 +1,3 @@
 Library folder used in the program.
+
+Some libraries do not include .example files, if there are not necessarily correct, check the .h and .cpp files.
