@@ -3,7 +3,7 @@ In this folder there is an .ino file along with an .html file which has been com
 
 In the ino file, I use SPIFFS as data storage in the esp, but it is not included in this folder, because it only contains .txt files.
 
-The .html file is still very basic and the arrangement is not neat, because it is only arranged dynamically without much other structure.
+The .html file is still very basic and its structure is not neat, because it is only arranged statically without much other structure.
 
 Preview of Web Browser :
 ![WebBrowser](https://github.com/user-attachments/assets/444ec236-02f3-4096-8d8e-072f311f252b)
